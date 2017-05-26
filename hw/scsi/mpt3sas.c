@@ -1871,7 +1871,7 @@ static int mpt3sas_build_ieee_sgl(MPT3SASState *s, MPT3SASRequest *req, hwaddr a
 static void dump_cdb(uint8_t *buf, int len)
 {
     int cdb_len = 0;
-    char cdb[32] = {0};
+    char cdb[256] = {0};
     int i = 0;
 
     for (i = 0; i < len; i++) {

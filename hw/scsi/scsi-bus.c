@@ -10,6 +10,7 @@
 #include "trace.h"
 #include "sysemu/dma.h"
 #include "qemu/cutils.h"
+#include "trace/control.h"
 
 static char *scsibus_get_dev_path(DeviceState *dev);
 static char *scsibus_get_fw_dev_path(DeviceState *dev);
@@ -1267,6 +1268,7 @@ int scsi_req_parse_cdb(SCSIDevice *dev, SCSICommand *cmd, uint8_t *buf)
         return rc;
 
     memcpy(cmd->buf, buf, cmd->len);
+    trace_scsi_cmd_xfer_entry(cmd, cmd->xfer);
     scsi_cmd_xfer_mode(cmd);
     cmd->lba = scsi_cmd_lba(cmd);
     return 0;
@@ -1294,6 +1296,11 @@ const struct SCSISense sense_code_NO_SENSE = {
 /* LUN not ready, Manual intervention required */
 const struct SCSISense sense_code_LUN_NOT_READY = {
     .key = NOT_READY, .asc = 0x04, .ascq = 0x03
+};
+
+/* LUN not ready, Format in Progress */
+const struct SCSISense sense_code_FORMAT_IN_PROGRESS = {
+    .key = NOT_READY, .asc = 0x04, .ascq = 0x04
 };
 
 /* LUN not ready, Medium not present */
@@ -1604,6 +1611,7 @@ const char *scsi_command_name(uint8_t cmd)
 
 SCSIRequest *scsi_req_ref(SCSIRequest *req)
 {
+    trace_scsi_req_ref(req->refcount);
     assert(req->refcount > 0);
     req->refcount++;
     return req;
@@ -1611,6 +1619,7 @@ SCSIRequest *scsi_req_ref(SCSIRequest *req)
 
 void scsi_req_unref(SCSIRequest *req)
 {
+    trace_scsi_req_unref(req->refcount);
     assert(req->refcount > 0);
     if (--req->refcount == 0) {
         BusState *qbus = req->dev->qdev.parent_bus;
@@ -1707,6 +1716,7 @@ void scsi_req_print(SCSIRequest *req)
 
 void scsi_req_complete(SCSIRequest *req, int status)
 {
+    trace_scsi_req_complete(req->sense_len, status);
     assert(req->status == -1);
     req->status = status;
 

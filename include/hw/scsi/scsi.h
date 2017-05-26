@@ -110,6 +110,8 @@ struct SCSIDevice
     uint64_t max_lba;
     uint64_t wwn;
     uint64_t port_wwn;
+    bool is_formatting;
+    int progress;
 };
 
 extern const VMStateDescription vmstate_scsi_device;
@@ -187,6 +189,8 @@ void scsi_bus_legacy_handle_cmdline(SCSIBus *bus, Error **errp);
 extern const struct SCSISense sense_code_NO_SENSE;
 /* LUN not ready, Manual intervention required */
 extern const struct SCSISense sense_code_LUN_NOT_READY;
+/* LUN not ready, Format in Progress */
+extern const struct SCSISense sense_code_FORMAT_IN_PROGRESS;
 /* LUN not ready, Medium not present */
 extern const struct SCSISense sense_code_NO_MEDIUM;
 /* LUN not ready, medium removal prevented */

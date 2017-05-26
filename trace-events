@@ -598,6 +598,10 @@ scsi_report_luns(int target, int lun, int tag) "target %d lun %d tag %d"
 scsi_inquiry(int target, int lun, int tag, int cdb1, int cdb2) "target %d lun %d tag %d page %#02x/%#02x"
 scsi_test_unit_ready(int target, int lun, int tag) "target %d lun %d tag %d"
 scsi_request_sense(int target, int lun, int tag) "target %d lun %d tag %d"
+scsi_cmd_xfer_entry(void* cmd, int xfer) "cmd %p xfer %d"
+scsi_req_complete(int len, int status) "sense_len %d status %d"
+scsi_req_ref(int refcount) "refcount %d"
+scsi_req_unref(int refcount) "refcount %d"
 
 # vl.c
 vm_state_notify(int running, int reason) "running %d reason %d"
@@ -721,6 +725,12 @@ lm32_timer_irq_state(int level) "irq state %d"
 lm32_uart_memory_write(uint32_t addr, uint32_t value) "addr 0x%08x value 0x%08x"
 lm32_uart_memory_read(uint32_t addr, uint32_t value) "addr 0x%08x value 0x%08x"
 lm32_uart_irq_state(int level) "irq state %d"
+
+# hw/scsi/scsi-disk.c
+# scsi_disk_command_unknown(uint32_t status, uint8_t *buf) "status %d buffer %p"
+# scsi_check_command_condition(uint32_t tag, uint8_t key, uint8_t asc, uint8_t ascq) "tag %d key %d asc %d ascq %d"
+scsi_format_unit_cmd(void *buf) "buffer %p"
+qdev_sense(void *buf) "sense %p"
 
 # hw/scsi/mptsas.c
 mptsas_command_complete(void *dev, uint32_t ctx, uint32_t status, uint32_t resid) "dev %p context 0x%08x status %x resid %d"
